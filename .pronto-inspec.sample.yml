@@ -4,4 +4,4 @@ suites:
   - default:
     files: ['setup.rb']
   - test:
-    files: []
+    files: ['*']

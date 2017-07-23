@@ -81,6 +81,11 @@ module Pronto
         puts "\nInspecting '#{suite_name}'...".yellow
         puts "\tSearching for '#{changed_file}' in suite '#{suite_name}'...".yellow
         suite['files'].each do |file|
+          if file.include?('*')
+            puts 'Found wildcard, adding suite to runlist'.blue
+            @suites_to_run.push(suite_name)
+            next
+          end
           puts "\t\tMatching changed '#{changed_file}' against suite file '#{file}'...".yellow
           next unless changed_file.include?(file) || @suites_to_run.include?(suite_name)
           puts "\t\t\tFound '#{file}' in '#{suite_name}'! Adding '#{suite_name}' to run list".blue
