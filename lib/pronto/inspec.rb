@@ -38,20 +38,24 @@ module Pronto
         .select { |patch| patch.additions > 0 }
         .map { |patch| inspect(patch) }
 
-      failures = []
+      result = []
 
       if @suites_to_run.count > 0
-        puts "\nCreated runlist: #{@suites_to_run}".blue
-        failures = []
+        puts "\nCreated runlist: #{@suites_to_run}\n".blue
+        result = []
         @suites_to_run.each do |suite|
           system("#{@kitchen_command} #{suite}")
           doc = Nokogiri::XML(File.open(@inspec_file))
           testsuites = doc.xpath('//testsuite')
-          testsuites.each_with_index do |_, index|
+          testsuites.each_with_index do |testsuite, index|
             failed = testsuites[index].attr('failed')
             name = testsuites[index].attr('name')
             if failed.to_i > 0
-              failures.push(create_message(suite, "Suite '#{name}' expirienced #{failed} failures"))
+              failures = ''
+              testsuite.xpath('//failure').each do |failure|
+                failures += "- #{failure.attr('message')} \n"
+              end
+              result.push(create_message(suite, "Testsuite '#{name}' in #{suite} expirienced #{failed} failures: \n#{failures}".red))
             else
               puts "\n No failures found for testsuite '#{name}' in kitchen suite '#{suite}'".green
             end
@@ -61,7 +65,7 @@ module Pronto
         puts 'Found no matching files in suites'.red
       end
 
-      failures
+      result
     end
 
     private
