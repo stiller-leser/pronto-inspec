@@ -3,5 +3,5 @@ inspec_file: 'inspec_output.xml'
 suites:
   - default:
     files: ['setup.rb']
-  - test:
+  - all:
     files: ['*']

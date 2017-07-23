@@ -9,7 +9,7 @@ module Pronto
     def initialize(_, _ = nil)
       super
       begin
-        @config = YAML.load_file('.pronto-test-kitchen.yml')
+        @config = YAML.load_file('.pronto-inspec.yml')
       rescue
         abort('Could not find .pronto-test-kitchen file.'.red)
       end
@@ -27,7 +27,7 @@ module Pronto
           puts "No files configured for suite #{suite.first[0]}\n".yellow
         end
       end
-      abort('All suites are empty, please specify files.'.red) if @suites_to_check.count.zero
+      abort('All suites are empty, please specify files.'.red) if @suites_to_check.count.zero?
       @suites_to_run ||= []
     end
 
@@ -81,13 +81,14 @@ module Pronto
         puts "\nInspecting '#{suite_name}'...".yellow
         puts "\tSearching for '#{changed_file}' in suite '#{suite_name}'...".yellow
         suite['files'].each do |file|
+          next if @suites_to_run.include?(suite_name)
           if file.include?('*')
             puts 'Found wildcard, adding suite to runlist'.blue
             @suites_to_run.push(suite_name)
             next
           end
           puts "\t\tMatching changed '#{changed_file}' against suite file '#{file}'...".yellow
-          next unless changed_file.include?(file) || @suites_to_run.include?(suite_name)
+          next unless changed_file.include?(file)
           puts "\t\t\tFound '#{file}' in '#{suite_name}'! Adding '#{suite_name}' to run list".blue
           @suites_to_run.push(suite_name)
         end
