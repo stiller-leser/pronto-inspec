@@ -1,15 +1,15 @@
 # -*- encoding: utf-8 -*-
 $LOAD_PATH.push File.expand_path('../lib', __FILE__)
 
-require 'pronto/test-kitchen/version'
+require 'pronto/inspec/version'
 
 Gem::Specification.new do |s|
-  s.name = 'pronto-test-kitchen'
-  s.version = Pronto::TestKitchenVersion::VERSION
+  s.name = 'pronto-inspec'
+  s.version = Pronto::InspecVersion::VERSION
   s.platform = Gem::Platform::RUBY
   s.authors = ['stiller-leser']
   s.email = ''
-  s.homepage = 'https://github.com/stiller-leser/pronto-test-kitchen'
+  s.homepage = 'https://github.com/stiller-leser/pronto-inspec'
   s.summary = <<-EOF
     Pronto runner for running test kitchen
   EOF
@@ -25,8 +25,11 @@ Gem::Specification.new do |s|
 
   s.add_dependency('pronto', '~> 0.9.0')
   s.add_dependency('rugged', '~> 0.24', '>= 0.23.0')
+  s.add_dependency('colorize', '~> 0.8')
+  s.add_dependency('nokogiri', '~> 1.8')
+  s.add_dependency('test-kitchen', '~> 0')
+  s.add_dependency('inspec', '~> 0')
   s.add_development_dependency('rake', '~> 12.0')
   s.add_development_dependency('rspec', '~> 3.4')
-  s.add_development_dependency('byebug')
-  s.add_development_dependency('test-kitchen')
+  s.add_development_dependency('byebug', '~> 0')
 end

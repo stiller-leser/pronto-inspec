@@ -1,0 +1,7 @@
+kitchen_command: chef exec kitchen test
+inspec_file: 'inspec_output.xml'
+suites:
+  - default:
+    files: ['setup.rb']
+  - test:
+    files: []
