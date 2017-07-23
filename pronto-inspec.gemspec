@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+
 $LOAD_PATH.push File.expand_path('../lib', __FILE__)
 
 require 'pronto/inspec/version'
@@ -18,7 +19,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.0.0'
   s.rubygems_version = '1.8.23'
 
-  s.files = Dir.glob('{lib}/**/*') + %w(LICENSE README.md)
+  s.files = Dir.glob('{lib}/**/*') + %w[LICENSE README.md]
   s.test_files = `git ls-files -- {spec}/*`.split("\n")
   s.extra_rdoc_files = ['LICENSE', 'README.md']
   s.require_paths = ['lib']
