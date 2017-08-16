@@ -10,7 +10,7 @@ module Pronto
       begin
         @config = YAML.load_file('.pronto-inspec.yml')
       rescue
-        abort('Could not find .pronto-test-kitchen file.'.red)
+        abort('Could not find .pronto-inspec file. See .pronto-inspec.sample.yml'.red)
       end
 
       @kitchen_command = @config['kitchen_command']
