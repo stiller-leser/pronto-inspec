@@ -2,6 +2,8 @@ require 'pronto'
 require 'yaml'
 require 'colorize'
 require 'nokogiri'
+require 'byebug'
+require 'open3'
 
 module Pronto
   class Inspec < Runner
@@ -43,7 +45,15 @@ module Pronto
         puts "\nCreated runlist: #{@suites_to_run}\n".blue
         result = []
         @suites_to_run.each do |suite|
-          system("#{@kitchen_command} #{suite}")
+          cmd = "#{@kitchen_command} #{suite}"
+          Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+            stdin.close
+            stdout.each_line { |line| puts line }
+            exit_status = wait_thr.value
+            unless exit_status.success?
+              abort "Test kitchen failed"
+            end
+          end
           doc = Nokogiri::XML(File.open(@inspec_file))
           testsuites = doc.xpath('//testsuite')
           testsuites.each_with_index do |testsuite, index|

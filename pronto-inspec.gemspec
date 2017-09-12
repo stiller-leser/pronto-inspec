@@ -30,5 +30,5 @@ Gem::Specification.new do |s|
   s.add_dependency('nokogiri', '~> 1.8')
   s.add_development_dependency('rake', '~> 12.0')
   s.add_development_dependency('rspec', '~> 3.4')
-  s.add_development_dependency('byebug', '~> 0')
+  s.add_development_dependency('byebug', '>= 0')
 end
