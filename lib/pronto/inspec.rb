@@ -2,7 +2,6 @@ require 'pronto'
 require 'yaml'
 require 'colorize'
 require 'nokogiri'
-require 'byebug'
 require 'open3'
 
 module Pronto
