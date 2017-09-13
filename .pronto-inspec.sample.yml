@@ -1,7 +1,9 @@
 kitchen_command: chef exec kitchen test
 inspec_file: 'inspec_output.xml'
 suites:
-  - default:
-    files: ['setup.rb']
-  - all:
-    files: ['*']
+  - my_test_suite:
+    files: ['my/cookbook/specifc_file.rb']
+  - my_test_suite_with_all_files_and_tests:
+    files: ['my/cookbook/*', 'tests/my/cookbook/*']
+  - add_this_test_suite_in_any_case:
+    files: ['**']

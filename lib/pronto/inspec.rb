@@ -3,6 +3,7 @@ require 'yaml'
 require 'colorize'
 require 'nokogiri'
 require 'open3'
+require 'byebug'
 
 module Pronto
   class Inspec < Runner
@@ -31,6 +32,10 @@ module Pronto
       @suites_to_run ||= []
     end
 
+    def copy_lines(str_in, str_out)
+      str_in.each_line {|line| str_out.puts line}
+    end
+
     def run
       return [] if !@patches || @patches.count.zero?
 
@@ -41,16 +46,18 @@ module Pronto
       result = []
 
       if @suites_to_run.count > 0
-        puts "\nCreated runlist: #{@suites_to_run}\n".blue
+        puts "\nCreated runlist: #{@suites_to_run}\n".green
         result = []
         @suites_to_run.each do |suite|
           cmd = "#{@kitchen_command} #{suite}"
           Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
             stdin.close
-            stdout.each_line { |line| puts line }
+            err_thr = Thread.new { copy_lines(stderr, $stderr) }
+            copy_lines(stdout, $stdout)
+            err_thr.join
             exit_status = wait_thr.value
             unless exit_status.success?
-              abort "Test kitchen failed"
+              abort "Test kitchen failed".red
             end
           end
           doc = Nokogiri::XML(File.open(@inspec_file))
@@ -91,18 +98,26 @@ module Pronto
       @suites_to_check.each do |suite|
         suite_name = suite.first[0]
         puts "\nInspecting '#{suite_name}'...".yellow
-        puts "\tSearching for '#{changed_file}' in suite '#{suite_name}'...".yellow
+        puts "\tSearching for '#{changed_file}' in suite '#{suite_name}'...".blue
         suite['files'].each do |file|
-          next if @suites_to_run.include?(suite_name)
-          if file.include?('*')
-            puts 'Found wildcard, adding suite to runlist'.blue
+          if @suites_to_run.include?(suite_name)
+            next
+          elsif file.include?('**')
+            puts 'Found wildcard, adding suite to runlist'.green
             @suites_to_run.push(suite_name)
+          elsif file[-1,1] == '*'
+            puts "\t\tMatching changed '#{changed_file}' against #{suite_name}".blue
+            if changed_file.include?(file[0, file.size-1])
+              puts "\t\t\tFound '#{file}' in '#{suite_name}'! Adding '#{suite_name}' to run list".green
+              @suites_to_run.push(suite_name)
+            end
+          elsif changed_file.include?(file)
+            puts "\t\tMatching changed '#{changed_file}' against suite file '#{file}'...".blue
+            puts "\t\t\tFound '#{file}' in '#{suite_name}'! Adding '#{suite_name}' to run list".green
+            @suites_to_run.push(suite_name)
+          else
             next
           end
-          puts "\t\tMatching changed '#{changed_file}' against suite file '#{file}'...".yellow
-          next unless changed_file.include?(file)
-          puts "\t\t\tFound '#{file}' in '#{suite_name}'! Adding '#{suite_name}' to run list".blue
-          @suites_to_run.push(suite_name)
         end
       end
     end
