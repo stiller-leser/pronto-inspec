@@ -3,7 +3,6 @@ require 'yaml'
 require 'colorize'
 require 'nokogiri'
 require 'open3'
-require 'byebug'
 
 module Pronto
   class Inspec < Runner
