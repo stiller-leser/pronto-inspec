@@ -51,7 +51,7 @@ module Pronto
           cmd = "#{@kitchen_command} #{suite}"
           Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
             stdin.close
-            err_thr = Thread.new { copy_lines(stderr, $stderr) }
+            err_thr = Thread.new { copy_lines(stderr, $stdout) }
             copy_lines(stdout, $stdout)
             err_thr.join
             exit_status = wait_thr.value
