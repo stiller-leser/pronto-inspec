@@ -106,7 +106,7 @@ module Pronto
             @suites_to_run.push(suite_name)
           elsif file[-1,1] == '*'
             puts "\t\tMatching changed '#{changed_file}' against #{suite_name}".blue
-            if changed_file.include?(file[0, file.size-1])
+            if changed_file.include?(file[0, file.size-2]) && changed_file.include?(suite_name)
               puts "\t\t\tFound '#{file}' in '#{suite_name}'! Adding '#{suite_name}' to run list".green
               @suites_to_run.push(suite_name)
             end
